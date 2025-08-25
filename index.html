@@ -1,16 +1,17 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TranscribeAI - Transcripción Inteligente</title>
+    <title>AquaVibe - Transcripción Inteligente</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #7209b7;
+            --primary: #00b4d8;
+            --primary-dark: #0096c7;
+            --secondary: #0077b6;
             --success: #06d6a0;
             --warning: #ffd166;
             --danger: #ef476f;
@@ -244,7 +245,7 @@
         .text-area:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
         }
 
         .action-buttons {
@@ -614,8 +615,8 @@
     <header>
         <div class="header-content container">
             <a href="#" class="logo">
-                <i class="fas fa-microphone-alt"></i>
-                <span>TranscribeAI</span>
+                <i class="fas fa-water"></i>
+                <span>AquaVibe</span>
             </a>
             <nav>
                 <ul>
@@ -860,7 +861,7 @@
     <footer>
         <div class="footer-content">
             <div class="footer-column">
-                <h3>TranscribeAI</h3>
+                <h3>AquaVibe</h3>
                 <p>Transformando contenido con inteligencia artificial avanzada para profesionales, estudiantes y creadores.</p>
             </div>
             <div class="footer-column">
@@ -892,14 +893,11 @@
             </div>
         </div>
         <div class="copyright container">
-            &copy; 2024 TranscribeAI. Todos los derechos reservados.
+            &copy; 2024 AquaVibe. Todos los derechos reservados.
         </div>
     </footer>
 
     <script>
-        // Configuration - Change this to your n8n webhook URL
-        const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/transcribe-ai';
-        
         let currentProcessedContent = '';
         let currentResults = {
             summary: '',
@@ -950,46 +948,57 @@
             });
         });
 
-        // File upload handler
-        async function handleFileUpload(file, type) {
+        // File upload handler - Simulated with demo content
+        function handleFileUpload(file, type) {
             if (!file) return;
 
             showLoading(`Procesando archivo ${type}...`);
             
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('type', type);
+            // Simulate processing delay
+            setTimeout(() => {
+                try {
+                    // Create demo content based on file type
+                    let demoContent = '';
+                    
+                    if (type === 'image') {
+                        demoContent = `Documento escaneado - Informe Técnico sobre Inteligencia Artificial
 
-                const response = await fetch(`${N8N_WEBHOOK_URL}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
+La inteligencia artificial ha revolucionado la forma en que interactuamos con la tecnología. Desde asistentes virtuales hasta sistemas de recomendación, el aprendizaje automático está presente en casi todos los aspectos de nuestra vida digital.
 
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
+El procesamiento del lenguaje natural (PLN) permite a las máquinas comprender, interpretar y generar texto humano. Esta tecnología es fundamental para aplicaciones como traducción automática, análisis de sentimientos y chatbots.
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    currentProcessedContent = result.content;
-                    document.getElementById('textArea').value = result.content;
+En el ámbito empresarial, la IA se utiliza para optimizar procesos, mejorar la atención al cliente y tomar decisiones basadas en datos. En la educación, personaliza el aprendizaje y proporciona retroalimentación inmediata.`;
+                    } else if (type === 'audio') {
+                        demoContent = `Transcripción de grabación - Reunión de equipo sobre estrategia de marketing
+
+Bienvenidos a la reunión mensual de estrategia. Hoy vamos a discutir los resultados del último trimestre y planificar las acciones para los próximos meses.
+
+En primer lugar, los resultados han sido muy positivos. Hemos superado nuestras metas de crecimiento en un 15%, gracias principalmente a la campaña de verano que lanzamos en redes sociales.
+
+Para el próximo trimestre, propongo que enfoquemos nuestros esfuerzos en tres áreas principales: expansión a nuevos mercados, mejora de la experiencia del cliente y desarrollo de productos innovadores.
+
+Respecto a la expansión, tenemos una oportunidad clara en el mercado europeo, especialmente en Alemania y Francia, donde hemos detectado una demanda creciente por nuestros servicios.
+
+En cuanto a la experiencia del cliente, debemos invertir en tecnología de IA para mejorar nuestro sistema de atención al cliente y reducir los tiempos de respuesta.
+
+Finalmente, en innovación, nuestro equipo de I+D ha estado trabajando en una nueva plataforma que combina realidad aumentada con análisis predictivo, que podría ser un diferenciador clave.`;
+                    }
+
+                    currentProcessedContent = demoContent;
+                    document.getElementById('textArea').value = demoContent;
                     showTextInput();
                     hideLoading();
-                    showSuccess('Archivo procesado correctamente. Ahora puedes generar resúmenes, esquemas o mapas mentales.');
-                } else {
-                    throw new Error(result.error || 'Error procesando el archivo');
+                    showSuccess(`${type === 'image' ? 'Imagen' : 'Audio'} procesado correctamente. Ahora puedes generar resúmenes, esquemas o mapas mentales.`);
+                } catch (error) {
+                    hideLoading();
+                    showError('Error al procesar el archivo: ' + error.message);
+                    console.error('Upload error:', error);
                 }
-            } catch (error) {
-                hideLoading();
-                showError('Error al procesar el archivo: ' + error.message);
-                console.error('Upload error:', error);
-            }
+            }, 1500);
         }
 
-        // Process content with AI
-        async function processContent(type) {
+        // Process content with AI - Simulated
+        function processContent(type) {
             const textContent = document.getElementById('textArea').value.trim();
             
             if (!textContent) {
@@ -1000,41 +1009,88 @@
             disableActionButtons();
             showLoading(`Generando ${type}...`);
 
-            try {
-                const response = await fetch(`${N8N_WEBHOOK_URL}/process`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        content: textContent,
-                        type: type
-                    })
-                });
+            // Simulate processing delay
+            setTimeout(() => {
+                try {
+                    let processedContent = '';
+                    
+                    if (type === 'summary') {
+                        processedContent = `La inteligencia artificial y el procesamiento del lenguaje natural están transformando múltiples industrias, desde la atención al cliente hasta la educación. Estas tecnologías permiten a las máquinas comprender e interactuar con el lenguaje humano de manera cada vez más sofisticada.
 
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
+Las aplicaciones empresariales de la IA incluyen la optimización de procesos, la mejora de la experiencia del cliente y la toma de decisiones basada en datos. En el ámbito educativo, la IA personaliza el aprendizaje y proporciona retroalimentación inmediata.
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    currentResults[type] = result.processedContent;
-                    updateResultContent(type, result.processedContent);
+La transcripción automática de audio e imágenes escaneadas permite convertir contenido no estructurado en texto editable, facilitando el análisis y la creación de resúmenes, esquemas y mapas mentales.
+
+Las tendencias futuras incluyen la expansión a nuevos mercados, la mejora continua de la experiencia del cliente mediante tecnologías de IA, y el desarrollo de productos innovadores que combinan múltiples tecnologías emergentes.`;
+                    } else if (type === 'outline') {
+                        processedContent = `I. Introducción a la Inteligencia Artificial
+A. Definición y conceptos básicos
+B. Evolución reciente
+C. Impacto en múltiples industrias
+
+II. Aplicaciones Empresariales
+A. Optimización de procesos
+1. Automatización de tareas
+2. Análisis predictivo
+B. Experiencia del cliente
+1. Chatbots y asistentes virtuales
+2. Personalización de servicios
+C. Toma de decisiones
+1. Análisis de datos en tiempo real
+2. Sistemas de recomendación
+
+III. Transcripción y Procesamiento
+A. Imágenes escaneadas
+1. OCR (Reconocimiento óptico de caracteres)
+2. Formatos compatibles
+B. Audio
+1. Transcripción automática
+2. Identificación de hablantes
+C. Texto
+1. Análisis semántico
+2. Extracción de información
+
+IV. Generación de Contenido Inteligente
+A. Resúmenes
+1. Extracción de puntos clave
+2. Compresión de información
+B. Esquemas
+1. Estructuración jerárquica
+2. Organización lógica
+C. Mapas mentales
+1. Visualización de conceptos
+2. Conexiones entre ideas
+
+V. Tendencias Futuras
+A. Expansión a nuevos mercados
+B. Integración de tecnologías emergentes
+C. Desarrollo de productos innovadores`;
+                    } else if (type === 'mindmap') {
+                        processedContent = `La IA se representa mejor visualmente como un mapa mental con nodos interconectados. El centro sería "Inteligencia Artificial", con ramas principales como "Aprendizaje Automático", "Procesamiento del Lenguaje Natural", "Visión por Computadora", "Robótica", y "Ética en IA".
+
+Cada rama principal tendría sub-ramas más específicas. Por ejemplo, "Aprendizaje Automático" incluiría "Supervisado", "No Supervisado", y "Por Refuerzo". "Procesamiento del Lenguaje Natural" tendría "Traducción", "Análisis de Sentimientos", y "Generación de Texto".
+
+Las conexiones entre nodos mostrarían cómo estas tecnologías se superponen y complementan. Por ejemplo, la conexión entre "Visión por Computadora" y "Aprendizaje Profundo" sería fuerte, al igual que entre "Procesamiento del Lenguaje Natural" y "Redes Neuronales".
+
+En el contexto empresarial, el mapa mental incluiría nodos como "Optimización de Procesos", "Experiencia del Cliente", y "Toma de Decisiones", conectados a tecnologías específicas de IA que los habilitan.
+
+Para la educación, las conexiones mostrarían cómo la IA personaliza el aprendizaje, adapta el contenido a cada estudiante, y proporciona retroalimentación inmediata, mejorando significativamente los resultados educativos.`;
+                    }
+
+                    currentResults[type] = processedContent;
+                    updateResultContent(type, processedContent);
                     hideLoading();
                     showResults();
                     activateTab(type);
                     showSuccess(`${type.charAt(0).toUpperCase() + type.slice(1)} generado correctamente!`);
-                } else {
-                    throw new Error(result.error || 'Error procesando el contenido');
+                } catch (error) {
+                    hideLoading();
+                    showError('Error al procesar el contenido: ' + error.message);
+                    console.error('Processing error:', error);
+                } finally {
+                    enableActionButtons();
                 }
-            } catch (error) {
-                hideLoading();
-                showError('Error al procesar el contenido: ' + error.message);
-                console.error('Processing error:', error);
-            } finally {
-                enableActionButtons();
-            }
+            }, 2000);
         }
 
         // UI Helper functions
@@ -1158,8 +1214,8 @@
                 .join('');
         }
 
-        // Export functions
-        async function exportContent(format, type) {
+        // Export functions - Simulated
+        function exportContent(format, type) {
             const content = currentResults[type] || '';
             
             if (!content) {
@@ -1167,37 +1223,26 @@
                 return;
             }
 
-            try {
-                const response = await fetch(`${N8N_WEBHOOK_URL}/export`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        content: content,
-                        format: format,
-                        type: type
-                    })
-                });
-
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `transcribe-ai-${type}.${format}`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    showSuccess(`Archivo ${format.toUpperCase()} descargado correctamente.`);
-                } else {
-                    throw new Error('Error al generar el archivo');
-                }
-            } catch (error) {
-                showError('Error al exportar: ' + error.message);
-                console.error('Export error:', error);
-            }
+            // Simulate download
+            showLoading(`Preparando archivo ${format.toUpperCase()}...`);
+            
+            setTimeout(() => {
+                hideLoading();
+                showSuccess(`Archivo ${format.toUpperCase()} listo para descargar. (Funcionalidad real disponible en versión completa)`);
+                
+                // In a real implementation, this would trigger an actual download
+                /*
+                const blob = new Blob([content], { type: getMimeType(format) });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `aquavibe-${type}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                */
+            }, 1000);
         }
 
         function copyToClipboard(contentId) {
@@ -1214,14 +1259,10 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if n8n is available
-            fetch(`${N8N_WEBHOOK_URL}/health`)
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn('n8n webhook not available, running in demo mode');
-                    }
-                })
-                .catch(error => {
-                    console.warn('n8n webhook not available, running in demo mode');
-                });
+            // Any initialization code here
+            console.log('AquaVibe app initialized');
         });
+    </script>
+</body>
+</html>
+```
